@@ -1,0 +1,1 @@
+python3 ./main.py $(find . -type f -name "*.chess" | sort -V)
