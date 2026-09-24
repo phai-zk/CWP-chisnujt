@@ -64,10 +64,9 @@ def checkmate(board: str):
     if board is None:
         return
     size = len(board)
-    if board is not None:
-        for i in range(size):
-            for j in range(size):
-                if move(i, j, board, size):
-                    print("Success")
-                    return
-        print("Fail")
+    for i in range(size):
+        for j in range(size):
+            if move(i, j, board, size):
+                print("Success")
+                return
+    print("Fail")
