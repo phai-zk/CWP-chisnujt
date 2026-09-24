@@ -41,7 +41,7 @@ def create_board(board: str) -> list:
     if board is None or str(board).strip() == "":
         print("Error: A board is empty!")
         return
-    
+
     king_count = board.count("K")
     if king_count == 0:
         print("Error: Have no one King on the board!")
@@ -49,7 +49,7 @@ def create_board(board: str) -> list:
     if king_count > 1:
         print("Error: Have more than one King!")
         return
-    
+
     board = [list(line) for line in board.strip().splitlines()]
     max_row = len(board)
     max_col = len(board[0])
@@ -70,3 +70,6 @@ def checkmate(board: str):
                 print("Success")
                 return
     print("Fail")
+
+if __name__ == "__main__":
+    checkmate()
