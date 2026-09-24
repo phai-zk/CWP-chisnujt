@@ -3,57 +3,49 @@ BISHOP_MOVE = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
 PAWN_MOVE = [(-1, -1), (-1, 1)]
 QUEEN_MOVE = ROOK_MOVE + BISHOP_MOVE
 PIECE_SET = ["K", "Q", "R", "B", "P"]
-max_row = 8
-max_col = 8
 
-def handle_boundary(i: int, j: int) -> bool:
-    return i < 0 or i >= max_row or j < 0 or j >= max_col
+def handle_boundary(i: int, j: int, size) -> bool:
+    return i < 0 or i >= size or j < 0 or j >= size
 
-def move(i: int, j: int, board: list, move_set: list) -> bool:
+def get_move_set(piece: str):
+    return PAWN_MOVE if piece == "P" \
+        else BISHOP_MOVE if piece == "B" \
+        else ROOK_MOVE if piece == "R" \
+        else QUEEN_MOVE if piece == "Q" else None
+
+def move(i: int, j: int, board: list, size:int) -> bool:
+    move_set = get_move_set(board[i][j])
+    if move_set is None: 
+        return False
     if board[i][j] == "P":
         for dx, dy in move_set:
             x = i + dx
             y = j + dy
-            if not handle_boundary(x, y) and board[x][y] == "K":
+            if not handle_boundary(x, y, size) and board[x][y] == "K":
                 return True
         return False
 
     for dx, dy in move_set:
         x = i + dx
         y = j + dy
-        while not handle_boundary(x, y):
+        while not handle_boundary(x, y, size):
             if board[x][y] == "K":
                 return True
             if board[x][y] in PIECE_SET:
                 break
             x += dx
             y += dy
-
     return False
 
-def piece_check(i: int, j: int, board: list) -> bool:
-    if board[i][j] == "P":
-        return move(i, j, board, PAWN_MOVE)
-    elif board[i][j] == "R":
-        return move(i, j, board, ROOK_MOVE)
-    elif board[i][j] == "B":
-        return move(i, j, board, BISHOP_MOVE)
-    elif board[i][j] == "Q":
-        return move(i, j, board, QUEEN_MOVE)
-    return False
-
-def create_board(board: list) -> None:
-    global max_row, max_col
-    king_count = board.count("K")
-
+def create_board(board: str) -> list:
     if board is None or str(board).strip() == "":
         print("Error: A board is empty!")
         return
-
+    
+    king_count = board.count("K")
     if king_count == 0:
         print("Error: Have no one King on the board!")
         return
-
     if king_count > 1:
         print("Error: Have more than one King!")
         return
@@ -61,29 +53,21 @@ def create_board(board: list) -> None:
     board = [list(line) for line in board.strip().splitlines()]
     max_row = len(board)
     max_col = len(board[0])
-    col_set = set([len(x) for x in board])
 
-    # print(board)
-    # print(f"{max_row} {max_col} {len(col_set)}")
-
-    if (max_row != max_col) or (len(col_set) > 1) :
+    if max_row != max_col or any(len(row) != max_col for row in board):
         print(f"Error: A board {max_row} x {max_col} is not a square!")
         return
-
-    if max_row > 8 or max_col > 8:
-        print(f"Error: The board is too big!")
-        return
-
     return board
 
 def checkmate(board: str):
     board = create_board(board)
-
+    if board is None:
+        return
+    size = len(board)
     if board is not None:
-        for i in range(max_row):
-            for j in range(max_col):
-                if piece_check(i, j, board):
+        for i in range(size):
+            for j in range(size):
+                if move(i, j, board, size):
                     print("Success")
                     return
         print("Fail")
-        

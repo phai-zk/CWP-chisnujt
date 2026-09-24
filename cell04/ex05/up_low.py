@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 word = input()
 new_word = ""
 
